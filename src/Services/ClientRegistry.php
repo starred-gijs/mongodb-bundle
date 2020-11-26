@@ -34,13 +34,6 @@ final class ClientRegistry
     /** @var DriverOptionsInterface */
     private $driverOptionsService;
 
-    /**
-     * ClientRegistry constructor.
-     *
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param bool $debug
-     * @param DriverOptionsInterface|null $driverOptionsService
-     */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         bool $debug,
@@ -53,23 +46,11 @@ final class ClientRegistry
         $this->driverOptionsService = $driverOptionsService;
     }
 
-    /**
-     * @param array $configurations
-     */
-    public function addClientsConfigurations(array $configurations)
+    public function addClientsConfigurations(array $configurations): void
     {
         foreach ($configurations as $name => $conf) {
-            $this->addClientConfiguration($name, $conf);
+            $this->configurations[$name] = $this->buildClientConfiguration($conf);
         }
-    }
-
-    /**
-     * @param string $name
-     * @param array  $conf
-     */
-    private function addClientConfiguration(string $name, array $conf)
-    {
-        $this->configurations[$name] = $this->buildClientConfiguration($conf);
     }
 
     /**
