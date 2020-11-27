@@ -61,7 +61,7 @@ final class ClientRegistry
     private function buildClientConfiguration(array $conf): ClientConfiguration
     {
         if (! $conf['uri']) {
-            $conf['uri'] = $this->buildConnectionUri($conf['hosts']);
+            $conf['uri'] = self::buildConnectionUri($conf['hosts']);
         }
 
         $conf['driverOptions'] = [];
@@ -84,17 +84,12 @@ final class ClientRegistry
         );
     }
 
-    /**
-     * @param array $hosts
-     *
-     * @return string
-     */
-    private function buildConnectionUri(array $hosts): string
+    private static function buildConnectionUri(array $hosts): string
     {
         return 'mongodb://' . implode(
             ',',
             array_map(
-                function (array $host) {
+                static function (array $host): string {
                     return sprintf('%s:%d', $host['host'], $host['port']);
                 },
                 $hosts
@@ -102,32 +97,17 @@ final class ClientRegistry
         );
     }
 
-    /**
-     * @param string $name
-     * @param string $databaseName
-     *
-     * @return Client
-     */
     public function getClientForDatabase(string $name, string $databaseName): Client
     {
         return $this->getClient($name, $databaseName);
     }
 
-    /**
-     * @return array
-     */
     public function getClientNames(): array
     {
         return array_keys($this->clients);
     }
 
-    /**
-     * @param string $name
-     * @param string $databaseName
-     *
-     * @return Client
-     */
-    public function getClient(string $name, string $databaseName = null): Client
+    public function getClient(string $name, ?string $databaseName = null): Client
     {
         $clientKey = null !== $databaseName ? $name . '.' . $databaseName : $name;
 
